@@ -141,10 +141,10 @@
                             </div> -->
                             <div id="box_bottom">
                                 <input type="button" value="搜索" class="ui_input_btn01"/><input type="text" id="filter">
-                                <button type="reset" class="ui_input_btn01" onclick="resetFeedback();">重置内容</button>
-                                <button type = "button" class="ui_input_btn01" id="receivefile" onclick="receiveFile();">接受文件</button>
-                                <button type = "button"class="ui_input_btn01" onclick="showlist();">展示列表</button>
-                                <button type = "button"class="ui_input_btn01" onclick="showlist();">刷新</button>
+                                <!-- <button type="reset" class="ui_input_btn01" onclick="resetFeedback();">重置内容</button> -->
+                                <!-- <button type = "button" class="ui_input_btn01" id="receivefile" onclick="receiveFile();">接受文件</button> -->
+                                <button type = "button"class="ui_input_btn01" onclick="merge_receive_present();">刷新列表</button>
+                                <!-- <button type = "button"class="ui_input_btn01" onclick="merge_receive_present();">刷新</button> -->
                                 <input type="button" value="上传" id = "add_file"class="ui_input_btn01"/> 
                             </div>
                         </div>
@@ -543,7 +543,18 @@
                 openIFrame()	
             })
         });
+
+
+        //合并接收和显示
+        function merge_receive_present(){
+            receiveFile();
+            setTimeout(()=>{
+            showlist();
+        },1000);
+        }
         </script>
+
+    
 
 
         
