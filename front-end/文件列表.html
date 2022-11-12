@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        a:link {
+			color:red;
+			text-decoration:none;
+		}
+		a:visited {
+			color:pink;
+			text-decoration:none;
+		}
+		a:hover {
+			color:blue;
+			text-decoration:none;
+		}
+		a:active {
+			color:black;
+			text-decoration:none;
+		}
+    </style>
+    <script type="text/javascript" src="./index.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- <script src="jquery-2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script> -->
+    <!-- <script type="text/javascript" src="scripts/jquery/jquery-1.7.1.js"></script> -->
+    <link href="styles/authority/basic_layout.css" rel="stylesheet" type="text/css">
+    <link href="styles/authority/common_style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="scripts/authority/commonAll.js"></script>
+    <!-- <script type="text/javascript" src="scripts/fancybox/jquery.fancybox-1.3.4.js"></script>
+    <script type="text/javascript" src="scripts/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/authority/jquery.fancybox-1.3.4.css" media="screen"></link> -->
+    <!-- <script type="text/javascript" src="scripts/artDialog/artDialog.js?skin=default"></script> -->
+
+    <style>
+        /*浮窗样式*/
+        /*最底下的灰色div*/
+    .alertBelowDiv{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    background-color: rgba(100, 100, 100, 0.8);
+
+    /*将内容居中*/
+    align-items: center;
+    display: -webkit-flex;
+    justify-content: center;
+    }
+    /*白色确定框*/
+    .alertContentDiv{
+    width: 25%;
+    height: 30%;
+    /* background-color: white; */
+    border-radius: 5%;
+    }
+    /*展示文字部分*/
+    .alertTextDiv{
+
+    width: 100%;
+    height: 10%;
+    margin: 15% auto;
+    text-align: center;
+    font-size: x-large;
+    font-weight: 600;
+
+    }
+    /*取消按钮*/
+    .alertCancelDiv{
+    float: left;
+    width: 18%;
+    height: 15%;
+    background-color: lightslategrey;
+    border-radius: 15%;
+    font-weight: 600;
+    color: #fff;
+    align-items: center;
+    display: -webkit-flex;
+    justify-content: center;
+    margin-left: 15%;
+
+    }
+
+    /*确定按钮*/
+    .alertSubmitDiv{
+    float: right;
+    width: 18%;
+    height: 15%;
+    background-color: lightslategrey;
+    border-radius: 15%;
+    font-weight: 600;
+    color: #fff;
+    align-items: center;
+    display: -webkit-flex;
+    justify-content: center;
+    margin-right: 15%;
+    }
+
+    </style>
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/恢复页面.css">
+    <link rel="stylesheet" href="styles/main.css"></link>
+</head>
+
+<body>
+        <!-- 侧边导航栏 -->
+        <div class="cebian">
+            <div class = 'background' id="background"></div>
+            <div id="fab">&#43;</div>
+            <header id="page-header"><a id="hamburger" href="#sidebar-nav" target="_self"><span class="line"></span><span class="line"></span><span class="line"></span></a></header>
+            <nav id="sidebar-nav">
+                <header id="sidebar-header"><a id="codepen-link" href="登陆.html" target="_blank"></a>
+                <div id="profile-info">
+                    <h3 id="profile-name">数据备份软件功能</h3>
+                </div><a id="btn-more"><span class="dot"></span><span class="dot"></span><span class="dot"></span></a>
+                <ul id="sidebar-nav-list">
+                    <li class="sidebar-nav-item" id="nav-item-home"><a href="恢复页面.html">文件恢复</a></li>
+                    <li class="sidebar-nav-item" id="nav-item-pictures"><a href="文件列表.html">展示文件列表</a></li>
+                    <li class="sidebar-nav-item" id="nav-item-pictures"><a href="软件备份主页面.html">反馈</a></li>
+                </ul>
+                </header>
+            </nav><a id="nav-screen-overlay" href="#" target="_self"></a>
+        </div>
+        <!-- 侧边导航栏 -->
+
+        <div class="center" style="margin:100px auto;">
+            <div id="container">
+                <div class="ui_content">
+                    <div class="ui_text_indent">
+                        <div id="box_border">
+                            <div id="box_top">搜索</div>
+                            <div class="content clearfix">
+                                <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                                    <p>filePath: <input type="text" id="filePath"></p>
+                                    <p>filter: <input type="text" id="filter"></p>
+                                    <button type="reset" onclick="resetFeedback();">重置内容</button>
+                                    <button type = "button" id="receivefile" onclick="receiveFile();">接受文件列表</button>
+                                    <button type = "button" onclick="showlist();">展示文件列表</button>
+                                    <button type = "button" onclick="showlist();">刷新</button>
+                                </form>
+                            </div>
+                            <div id="box_bottom">
+                                <input type="button" value="上传" id = "add_file"class="ui_input_btn01" onclick=";" /> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 主页面设计 -->
+        <div class="center" style="width:404px;margin:100px auto;">
+            <!-- <div class="box wrapper">
+                <div class="title">
+                    <h2>直接通过filePath删除文件</h2>
+                </div> 
+        
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/delete" method="post" target="_blank">
+                        <p>password: <input type="text" id="password_delete"></p>
+                        <p>filePath: <input type="text" id="filePath_delete"></p>
+                        <button type = "button" type="reset">重置文本内容</button>
+                        <button type = "button" onclick="deletefiles();">删除文件</button>
+                    </form>
+                </div>
+            </div> -->
+
+            <!-- <div class="box wrapper">
+                <div class="title">
+                    <h2>展示文件列表</h2>
+                </div> 
+        
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                        <p>filePath: <input type="text" id="filePath"></p>
+                        <p>filter: <input type="text" id="filter"></p>
+                        <button type="reset" onclick="resetFeedback();">重置内容</button>
+                        <button type = "button" id="receivefile" onclick="receiveFile();">接受文件列表</button>
+                        <button type = "button" onclick="showlist();">展示文件列表</button>
+                        <button type = "button" onclick="showlist();">刷新</button>
+                    </form>
+                </div>
+
+            </div> -->
+
+            <div class="saveButton" style="margin:-50px -200px;">
+                <!-- <button>备份文件和文件夹</button> -->
+            </div>
+        </div>
+
+
+        
+        <script>
+        //记录历史文件目录
+        let filellist_history = [];
+
+
+        // 记录文件列表
+        let filelist = [];
+        receiveFile_auto();
+        setTimeout(()=>{
+            showlist();
+        },1000);
+
+        //进入页面时的自动获取根目录文件
+        function receiveFile_auto(){
+            filelist = [];
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let filePath = "\/";
+            let filter = document.getElementById("filter").value;
+            $.ajax({
+                    url: "http://uestcapi.basecat.cn/filelist",
+                    data: {username: username, AccessKey: AccessKey,filePath:filePath,filter:filter},
+                    type: "POST",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        console.log(JSON.parse(data.msg).length);
+                        if(data.ret == 0)alert("根目录文件已经全部接收成功！")
+                        for(var i = 0;i<JSON.parse(data.msg).length;i++){
+                            filelist.push([
+                            JSON.parse(data.msg)[i].name,
+                            JSON.parse(data.msg)[i].path,
+                            num_change(JSON.parse(data.msg)[i].size),
+                            timestampToTime(JSON.parse(data.msg)[i].modTime),
+                            timestampToTime(JSON.parse(data.msg)[i].uploadTime),
+                            JSON.parse(data.msg)[i].md5]);
+                        }
+                    }
+                });
+        }
+
+        
+        // 接收文件列表并存储
+        function receiveFile(){
+            filelist = [];
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let filePath = document.getElementById("filePath").value;
+            let filter = document.getElementById("filter").value;
+            $.ajax({
+                    url: "http://uestcapi.basecat.cn/filelist",
+                    data: {username: username, AccessKey: AccessKey,filePath:filePath,filter:filter},
+                    type: "POST",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        console.log(JSON.parse(data.msg).length);
+                        if(data.ret == 0)alert("文件已经全部接收成功！")
+                        for(var i = 0;i<JSON.parse(data.msg).length;i++){
+                            filelist.push([
+                            JSON.parse(data.msg)[i].name,
+                            JSON.parse(data.msg)[i].path,
+                            num_change(JSON.parse(data.msg)[i].size),
+                            timestampToTime(JSON.parse(data.msg)[i].modTime),
+                            timestampToTime(JSON.parse(data.msg)[i].uploadTime),
+                            JSON.parse(data.msg)[i].md5]);
+                        }
+                    }
+                });
+        };
+
+        // 展示文件
+        function showlist(){
+            //先重置所有显示的tables
+            var body = document.querySelector(".saveButton");
+            var table = document.querySelector("table");
+            if(table)body.removeChild(table);
+            arr = ["name","path","size","modTime","uploadTime","md5","delete","download","filehistory"];
+            
+            table = document.createElement("table");
+            body.appendChild(table);
+            var thead = document.createElement("thead");
+            table.appendChild(thead);
+            var trd = document.createElement("tr");
+            thead.appendChild(trd);
+
+            for(let i = 0;i<arr.length;i++){    
+                var th = document.createElement("th");
+                trd.appendChild(th);
+                var text = document.createTextNode(arr[i]);
+                th.appendChild(text);
+            }
+            var tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+
+            for(let i=0;i<filelist.length;i++){
+                var tr = document.createElement("tr");
+                tbody.appendChild(tr);
+                for(let k in filelist[i]){      
+                    var td = document.createElement("td");
+                    tr.appendChild(td);
+                    var text = document.createTextNode(filelist[i][k]);
+                    td.appendChild(text);
+                }
+
+                //添加删除按钮
+                var a = document.createElement("a");
+                a.setAttribute("href","javascript:void(0);");
+                a.setAttribute("onclick","delete_singlefile(\""+filelist[i][1] +filelist[i][0]+ "\")");
+                a.innerHTML="删除";
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                td.appendChild(a);
+
+                //添加下载按钮
+                var a = document.createElement("a");
+                a.setAttribute("href","javascript:void(0);");
+                a.setAttribute("onclick","downloadFile(\""+filelist[i][1] +filelist[i][0]+ "\",\""+filelist[i][5] + "\")");
+                a.innerHTML="下载";
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                td.appendChild(a);
+
+                //添加下载文件历史版本按钮
+                var a = document.createElement("a");
+                a.setAttribute("href","javascript:void(0);");
+                a.setAttribute("onclick","downloadHistoryFile(\""+filelist[i][1] +filelist[i][0]+ "\")");
+                a.innerHTML="下载历史版本";
+                var td = document.createElement("td");
+                tr.appendChild(td);
+                td.appendChild(a);
+
+            }
+        }
+
+        // 删除表格中个文件
+        function delete_singlefile(filePath)
+        {
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let input_password = prompt("请输入密码");
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/delete",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath,},
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        if(response.ret == 0){receiveFile();alert('文件'+filePath+'删除成功');};
+                        if(response.ret != 0)alert('文件'+filePath+'删除失败，可能该文件不存在')
+
+                    }
+                });
+            }
+        }
+
+        //表格中某个文件的下载
+        function downloadFile(filePath,md5){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let input_password = prompt("请输入密码");
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/download",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath,md5:md5},
+                    success: function(response, status, request) {
+                        console.log(response);
+                        console.log(status);
+                        console.log(request);
+                        if(status == 'success'){alert('文件'+filePath+'下载成功')};
+                        var disp = request.getResponseHeader('Content-Disposition');
+                        if (disp && disp.search('attachment') != -1) {  //判断是否为文件
+                            var form = $('<form method="POST" action="' + url + '">');
+                            $.each(params, function(k, v) {
+                                form.append($('<input type="hidden" name="' + k +
+                                        '" value="' + v + '">'));
+                            });
+                            $('body').append(form);
+                            form.submit(); //自动提交
+                            }
+                    }
+                });
+            }
+        }
+
+        //表格中某个文件的历史版本下载
+        function downloadHistoryFile(filePath){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let input_password = prompt("请输入密码");
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/filehistory",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath},
+                    dataType: "json",
+                    success: function(response, status, request) {
+                        if(status == 'success'){alert('文件'+filePath+'历史版本下载成功')};
+                        filellist_history = [];
+                        for(var i = 0;i<JSON.parse(response.msg).length;i++){
+                            filellist_history.push([
+                            filePath,
+                            num_change(JSON.parse(response.msg)[i].size),
+                            timestampToTime(JSON.parse(response.msg)[i].modTime),
+                            timestampToTime(JSON.parse(response.msg)[i].uploadTime),
+                            JSON.parse(response.msg)[i].deleted,
+                            JSON.parse(response.msg)[i].md5]);
+                        }
+                        console.log(filellist_history);
+                        alertDiv();
+                    }
+                });
+            }
+        }
+
+        // 重置文本表格
+        function resetFeedback(){
+            stus = [];
+            file_num = 0;
+            var body = document.querySelector(".saveButton");
+            var table = document.querySelector("table");
+            // while(table){
+                body.removeChild(table);
+            // }      
+        }
+
+        //删除文件
+        function deletefiles(){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let filePath = document.getElementById("filePath_delete").value;
+            let input_password = document.getElementById("password_delete").value;
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/delete",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath,},
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        if(response.ret == 0){alert('文件'+filePath+'删除成功')};
+                        if(response.ret != 0)alert('文件'+filePath+'删除失败，可能该文件不存在')
+
+                    }
+                });
+            }
+        }
+
+        // 10位时间戳秒转换为标准时间 10位时间戳乘以1000
+        function timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000)
+        var Y = date.getFullYear() + '-'
+        var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+        const D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+        const h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+        const m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+        const s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+        return Y + M + D + h + m + s
+        }
+
+        //文件大小转换显示
+        function num_change(limit){
+            var size = "";
+            if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
+                size = limit.toFixed(2) + "B"
+            }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
+                size = (limit/1024).toFixed(2) + "KB"
+            }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
+                size = (limit/(1024 * 1024)).toFixed(2) + "MB"
+            }else{                                            //其他转化成GB
+                size = (limit/(1024 * 1024 * 1024)).toFixed(2) + "GB"
+            }
+        
+            var sizeStr = size + "";                        //转成字符串
+            var index = sizeStr.indexOf(".");                    //获取小数点处的索引
+            var dou = sizeStr.substr(index + 1 ,2)            //获取小数点后两位的值
+            if(dou == "00"){                                //判断后两位是否为00，如果是则删除00               
+                return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
+            }
+            return size;
+        }
+        
+        //浮窗div
+        function alertDiv(){
+            //创建div
+            let alertBelowDiv = document.createElement("div");//创建最下面的div
+            let alertContentDiv = document.createElement("div");//创建呈现内容的白色div
+            let alertTextDiv = document.createElement("div");//创建文字div
+            let alertSubmitDiv = document.createElement("div");//创建确定div
+            let alertCancelDiv = document.createElement("div");//创建取消div
+
+            //获取body
+            let body = document.body;
+
+
+
+            //添加div
+            body.appendChild(alertBelowDiv);
+            alertBelowDiv.appendChild(alertContentDiv);
+            // alertContentDiv.appendChild(alertTextDiv);
+            alertContentDiv.appendChild(alertCancelDiv);
+            // alertContentDiv.appendChild(alertSubmitDiv);
+
+            alertBelowDiv.className="alertBelowDiv";
+            alertContentDiv.className="alertContentDiv";
+            // alertTextDiv.className="alertTextDiv";
+            alertCancelDiv.className="alertCancelDiv";
+            // alertSubmitDiv.className="alertSubmitDiv";
+
+            // alertTextDiv.innerHTML="确定当前操作？"+value;
+            alertCancelDiv.innerHTML="取消";
+            // alertSubmitDiv.innerHTML="确定";
+
+            //添加点击函数
+            alertCancelDiv.onclick=function (){
+                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+            }
+
+            alertSubmitDiv.onclick=function (){
+                //业务代码执行部分
+                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+            }
+
+
+            arr = ["Path","size","modTime","uploadTime","deleted","md5","download"];
+            table = document.createElement("table");
+            alertContentDiv.appendChild(table);
+            table.className="table";
+            var thead = document.createElement("thead");
+            table.appendChild(thead);
+            var trd = document.createElement("tr");
+            thead.appendChild(trd);
+
+            for(let i = 0;i<arr.length;i++){    
+                    var th = document.createElement("th");
+                    trd.appendChild(th);
+                    var text = document.createTextNode(arr[i]);
+                    th.appendChild(text);
+                }
+                var tbody = document.createElement("tbody");
+                table.appendChild(tbody);
+
+                for(let i=0;i<filelist.length;i++){
+                    var tr = document.createElement("tr");
+                    tbody.appendChild(tr);
+                    for(let k in filellist_history[i]){      
+                        var td = document.createElement("td");
+                        tr.appendChild(td);
+                        var text = document.createTextNode(filellist_history[i][k]);
+                        td.appendChild(text);
+                    }
+
+
+                    //添加下载按钮
+                    var a = document.createElement("a");
+                    a.setAttribute("href","javascript:void(0);");
+                    a.setAttribute("onclick","downloadFile(\""+filellist_history[i][0] + "\",\""+filellist_history[i][5] + "\")");
+                    a.innerHTML="下载";
+                    var td = document.createElement("td");
+                    tr.appendChild(td);
+                    td.appendChild(a);
+
+            }
+
+        }
+
+        //上传文件窗口弹窗
+        $(function(){
+            $('#add_file').click(function(){
+                openIFrame()	
+            })
+        });
+        </script>
+
+
+        
+
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/恢复页面.css">
+    <link rel="stylesheet" href="styles/main.css"></link>
+</head>
+
+<body>
+        <!-- 侧边导航栏 -->
+        <div class="cebian">
+            <div class = 'background' id="background"></div>
+            <div id="fab">&#43;</div>
+            <header id="page-header"><a id="hamburger" href="#sidebar-nav" target="_self"><span class="line"></span><span class="line"></span><span class="line"></span></a></header>
+            <nav id="sidebar-nav">
+                <header id="sidebar-header"><a id="codepen-link" href="登陆.html" target="_blank"></a>
+                <div id="profile-info">
+                    <h3 id="profile-name">数据备份软件功能</h3>
+                </div><a id="btn-more"><span class="dot"></span><span class="dot"></span><span class="dot"></span></a>
+                <ul id="sidebar-nav-list">
+                    <li class="sidebar-nav-item" id="nav-item-home"><a href="恢复页面.html">文件恢复</a></li>
+                    <li class="sidebar-nav-item" id="nav-item-pictures"><a href="文件列表.html">展示文件列表</a></li>
+                    <li class="sidebar-nav-item" id="nav-item-pictures"><a href="软件备份主页面.html">反馈</a></li>
+                </ul>
+                </header>
+            </nav><a id="nav-screen-overlay" href="#" target="_self"></a>
+        </div>
+        <!-- 侧边导航栏 -->
+
+
+        <!-- 主页面设计 -->
+        <div class="center" style="width:404px;margin:100px auto;">
+            <div class="box wrapper">
+                <div class="title">
+                    <h2>发送反馈</h2>
+                </div> 
+        
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                        <p>输入反馈内容: <input id='feedback' type="text" name="text"></p>
+                        <button type="reset">重置文本内容</button>
+                        <button type = "button" id ='FeedBacks'>发送反馈</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="box wrapper">
+                <div class="title">
+                    <h2>展示反馈</h2>
+                </div> 
+    
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                        <p>[page](default 1): <input type="text" id="page"></p>
+                        <p>[size](default 5): <input type="text" id="size"></p>
+                        <button type="reset" onclick="resetFeedback()">重置内容</button>
+                        <button type = "button" onclick ="getFeedBacks()">获取反馈</button>
+                        <button type = "button" onclick="showFeedback();">展示反馈</button>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- <div class="box wrapper">
+                <div class="title">
+                    <h2>文件删除</h2>
+                </div> 
+        
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/delete" method="post" target="_blank">
+                        <p>password: <input type="text" id="password_delete"></p>
+                        <p>filePath: <input type="text" id="filePath_delete"></p>
+                        <button type = "button" type="reset">重置文本内容</button>
+                        <button type = "button" onclick="deletefiles();">删除文件</button>
+                    </form>
+                </div>
+            </div> -->
+
+            <!-- <div class="box wrapper">
+                <div class="title">
+                    <h2>文件下载</h2>
+                </div> 
+        
+                <div class="content clearfix">
+                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                        <p>password: <input type="text" id="password"></p>
+                        <p>filePath: <input type="text" id="filePath"></p>
+                        <button type = "button" type="reset">重置文本内容</button>
+                        <button type = "button" onclick="downloadFile();">下载文件</button>
+                    </form>
+                </div>
+            </div> -->
+            
+
+            <div class="saveButton" style="margin:100px auto;">
+                <!-- <button>备份文件和文件夹</button> -->
+            </div>
+        </div>
+
+
+        <script src="jquery-2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script>
+        // 记录反馈
+        let FeedBack = [];
+        getFeedBacks();
+        setTimeout(()=>{
+            showFeedback();
+        },1000);
+
+
+        // 发送反馈
+        $("#FeedBacks").on('click',function () {
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let feedbackText = document.getElementById("feedback").value;
+            $.ajax({
+              url: "http://uestcapi.basecat.cn/feedback",
+              data: {username: username, AccessKey: AccessKey,text:feedbackText},
+              type: "POST",
+              dataType: "json",
+              success: function(data) {
+                alert("发送反馈成功，反馈内容:"+feedbackText);
+                console.log(feedbackText);
+                console.log("发送反馈的数据为",data);
+                // data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+                $("#ret").text(data.result);
+              }
+            });
+        });
+
+        // 接收反馈并存储反馈内容
+        function getFeedBacks(){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let page = document.getElementById("page").value;
+            let size = document.getElementById("size").value;
+            if(page == '')page = 1;
+            if(size == '')size = 10;
+            $.ajax({
+					url: "http://uestcapi.basecat.cn/getfeedback",
+					data: {username: username, AccessKey: AccessKey,page: page,size:size},
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+                        FeedBack = [];
+                        for(var i = 0;i<JSON.parse(data.msg).length;i++){
+                            FeedBack.push([JSON.parse(data.msg)[i].time,JSON.parse(data.msg)[i].username,JSON.parse(data.msg)[i].text]);
+                        }
+                        console.log(FeedBack);
+                        alert("获取反馈内容成功!");
+						$("#ret").text(data.result);
+					}
+				});
+        };
+
+        // 展示反馈
+        function showFeedback(){
+            //先重置所有显示的tables
+            var body = document.querySelector(".saveButton");
+            var table = document.querySelector("table");
+            if(table)body.removeChild(table);
+            arr = ["反馈时间","反馈用户名","反馈内容"];
+            
+            table = document.createElement("table");
+            body.appendChild(table);
+            var thead = document.createElement("thead");
+            table.appendChild(thead);
+            var trd = document.createElement("tr");
+            thead.appendChild(trd);
+
+            for(let i = 0;i<arr.length;i++){    
+                var th = document.createElement("th");
+                trd.appendChild(th);
+                var text = document.createTextNode(arr[i]);
+                th.appendChild(text);
+            }
+            var tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+
+            for(let i=0;i<FeedBack.length;i++){
+                var tr = document.createElement("tr");
+                tbody.appendChild(tr);
+                for(let k in FeedBack[i]){      
+                    var td = document.createElement("td");
+                    tr.appendChild(td);
+                    var text = document.createTextNode(FeedBack[i][k]);
+                    td.appendChild(text);
+                }
+            }
+        }
+
+        // 重置反馈表格
+        function resetFeedback(){
+            stus = [];
+            file_num = 0;
+            var body = document.querySelector(".saveButton");
+            var table = document.querySelector("table");
+            // while(table){
+                body.removeChild(table);
+            // }      
+        }
+
+
+        //下载文件
+        function downloadFile(){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let filePath = document.getElementById("filePath").value;
+            let input_password = document.getElementById("password").value;
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/download",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath},
+                    success: function(response, status, request) {
+                        console.log(response);
+                        console.log(status);
+                        console.log(request);
+                        if(status == 'success'){alert('文件'+filePath+'下载成功')};
+                        var disp = request.getResponseHeader('Content-Disposition');
+                        if (disp && disp.search('attachment') != -1) {  //判断是否为文件
+                            var form = $('<form method="POST" action="' + url + '">');
+                            $.each(params, function(k, v) {
+                                form.append($('<input type="hidden" name="' + k +
+                                        '" value="' + v + '">'));
+                            });
+                            $('body').append(form);
+                            form.submit(); //自动提交
+                            }
+                    }
+                });
+            }
+        }
+
+        //删除文件
+        function deletefiles(){
+            let username = localStorage.getItem("username");
+            let AccessKey = localStorage.getItem("AccessKey");
+            let password = localStorage.getItem("password");
+            let filePath = document.getElementById("filePath_delete").value;
+            let input_password = document.getElementById("password_delete").value;
+            if(input_password != password)alert("输入密码有误，请重新输入");
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "http://uestcapi.basecat.cn/delete",
+                    data: {username:username,AccessKey:AccessKey,filePath:filePath,},
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        if(response.ret == 0){alert('文件'+filePath+'删除成功')};
+                        if(response.ret != 0)alert('文件'+filePath+'删除失败，可能该文件不存在')
+
+                    }
+                });
+            }
+        }
+
+
+
+
+        </script>
+
+        
+        
+
+
+</body>
+
+
+</html>

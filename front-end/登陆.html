@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登陆页面</title>
+    <link rel="stylesheet" href="styles/style.css"></link>
+
+</head>
+
+<body>
+<div class="login-form-wrap">
+    <h1>数据备份软件登陆平台</h1>
+    <form class="login-form" action="#" id="regist" method="post" Enctype="multipart/form-data">
+        <label><input type="text" id="username" name="username" placeholder="请输入用户名" value="">
+        </label>
+        <label><input type="password" id="password" name="password" placeholder="请输入密码" value=""></label>
+        </label>
+        
+        <!-- <input type="submit" value="登陆" onclick="denglu()"> -->
+        <li><input type="button" value="登录" id = "button"/></li>
+        <input type="reset" value="重置" οnclick="reset()">
+        <li><a href="注册.html">注册</a></li>
+        <li><a href="修改密码.html">修改密码</a></li>
+    </form>
+</div>
+</body>
+
+<script src="jquery-2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+
+    $(":button").on("click",function(){
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        $.ajax({
+
+            url: "http://uestcapi.basecat.cn/login",
+            data: {username: username, password:password},
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                console.log("登陆的数据为",data);
+                // data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+                console.log(data.ret);
+                if(data.ret == 0)
+                    {
+                        //登陆时本地存储username和AccessKey
+                        window.location.href = '文件列表.html';
+                        localStorage.setItem("password",password);
+                        localStorage.setItem("username",username);
+                        localStorage.setItem("AccessKey",data.msg);
+                    }
+                if(data.ret == -1)alert("用户名或者密码错误，请重新输入");
+                $("#ret").text(data.result);
+            }
+        });
+    })
+
+    function reset(){
+        $("st1").value = $("st2").value =$("st3").value=$("st4").value="";
+        return false ;
+    }
+
+</script>
+
+
+</html>

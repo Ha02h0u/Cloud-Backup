@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="styles/main.css"></link>
+		<title>Document</title>
+		<style type="text/css">
+			.container {
+				width: 800px;
+				margin: 0 auto;
+				margin-top: 100px;
+				padding: 30px 0;
+				border: 1px dashed #272627;
+			}
+			
+			.test {
+				width: 100%;
+				padding: 10px 0;
+				margin: 20px 0;
+				color: #4bade8;
+				font-size: 18px;
+				text-align: center;
+			}
+			
+			#jsonTable {
+				width: 500px;
+				margin: 0 auto;
+			}
+			
+			#jsonTable th,
+			td {
+				padding: 6px 0;
+				line-height: 30px;
+				text-align: center;
+			}
+		</style>
+        
+	</head>
+ 
+	<body>
+		<div class="container">
+			<div class="test">获取模拟json数据</div>
+		</div>
+
+		    <!-- 获取md5值的插件 -->
+			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.0/spark-md5.min.js"></script>
+
+			<!-- 侧边导航栏 -->
+			<div class="cebian">
+				<div class = 'background' id="background"></div>
+				<div id="fab">&#43;</div>
+				<header id="page-header"><a id="hamburger" href="#sidebar-nav" target="_self"><span class="line"></span><span class="line"></span><span class="line"></span></a></header>
+				<nav id="sidebar-nav">
+					<header id="sidebar-header"><a id="codepen-link" href="登陆.html" target="_blank"></a>
+					<div id="profile-info">
+						<h3 id="profile-name">数据备份软件功能</h3>
+					</div><a id="btn-more"><span class="dot"></span><span class="dot"></span><span class="dot"></span></a>
+					<ul id="sidebar-nav-list">
+						<li class="sidebar-nav-item" id="nav-item-home"><a href="备份页面.html">数据备份</a></li>
+						<li class="sidebar-nav-item" id="nav-item-social"><a href="恢复页面.html">数据恢复</a></li>
+						<li class="sidebar-nav-item" id="nav-item-mail"><a href="我的任务.html">我的任务</a></li>
+						<li class="sidebar-nav-item" id="nav-item-pictures"><a href="我的云备份.html">我的云备份</a></li>
+					</ul>
+					</header>
+				</nav><a id="nav-screen-overlay" href="#" target="_self"></a>
+			</div>
+			<!-- 侧边导航栏 -->
+
+			<!-- 文件上传主体 -->
+			<div class="center" style="width:404px;margin:100px auto;">
+				<div class="box wrapper">
+					<div class="title">
+						<h2>数据备份</h2>
+					</div> 
+				</div> 
+				<div id="file" style="width: 404px;height: 150px;text-align: center;padding-top: 30px;margin: center;background-color: rgb(232, 221, 203);">
+					
+					<!-- 上传文件部分 -->
+					<a href="javascript:;" class="a-upload">
+						<input type="file" name="ver" id="fileInput" value="选择文件" multiple="multiple" onchange="getvl(this)"/>点击这里选择文件
+					</a>
+					<!-- upload_file()为与后端交互的 -->
+					<button class="upload" onclick="uploadFile(); showupfile();upload_file();">上传</button>
+					<button class="upload" onclick="clearFile();resetshowupfile();">重置</button>
+		
+					<!-- 上传文件夹部分 -->
+					<a href="javascript:;" class="a-upload">
+						<input  type="file"  class="upload-file" id="filesInput" value="选择文件夹" onchange="getvls(this)" webkitdirectory/>点击这里选择文件夹
+					</a>
+
+					
+					<button class="upload" onclick="uploadFiles(); showupfiles();">上传</button>
+					<button class="upload" onclick="clearFiles();resetshowupfiles();">重置</button>
+		
+		
+					<!-- 进度条 -->
+					<div class="progress" style="position: relative;top: 30px;width: 300px;height: 25px;line-height: 25px;margin:auto;text-align: center;border: 2px solid rgb(3, 101, 100);">
+						<span class="percent" style="position: relative; z-index:100;">上传进度：0%</span>
+						<span class="probg" style="position: absolute;left: 0;top: 0;height: 25px;background-color: rgb(28, 170, 221);width: 0px;"></span>
+					</div>
+		
+				</div>
+		
+				<div class="feedback" style="width: 396px;height: 30px;line-height: 30px;padding:4px;margin-top:20px;background-color: thistle;">服务端回信：</div>
+				<!-- 文件上传主体 -->
+		
+				<!-- 开始备份 -->
+				<div class="saveButton">
+					<button>备份文件和文件夹</button>
+				</div>
+			</div>
+ 
+		<script src="jquery-2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<!-- 网页原有script -->
+		<script>
+
+
+			// 文件上传主体//
+			let fileInput = document.getElementById("fileInput");
+			let uploadbtn = document.querySelector(".upload");
+			let progress = document.querySelector(".progress");
+			let probg = document.querySelector(".probg");
+			let percentInfo = document.querySelector(".percent");
+			let feedback = document.querySelector(".feedback");
+	
+			let filesInput = document.getElementById("filesInput");
+	
+			// 记录上传文件序号，上传文件名，物理地址的二维数组
+			let stus = [];
+			
+			//记录当前目录数量
+			let file_num = 0;
+	
+			// 文件上传进度
+			let percent = 0;
+	
+	
+			function progressFunction(e) {
+				if (e.lengthComputable) {
+					// 获取百分制的进度
+					percent = Math.round(e.loaded / e.total * 100);
+					// 长度根据进度条的总长度等比例扩大
+					probg.style.width = progress.clientWidth / 100 * percent + "px";
+					// 进度数值按百分制来
+					percentInfo.innerHTML = "上传进度：" + percent + "%";
+				}
+			}
+	
+			// 上传成功
+			function success(e) {
+				// console.log("成功" + e.currentTarget.responseText);
+				feedback.innerHTML = "服务端回信：" + e.currentTarget.responseText;
+			}
+	
+			// 上传失败
+			function fail(e) {
+				// console.log("服务端回信：" + e);
+			}
+	
+			// 文件上传
+			function uploadFile() {
+				let fileUp = document.getElementById("fileInput").files;
+				for(var i = 0; i < fileUp.length; i++){
+					let file = fileInput.files[i];
+					if (!file) {
+						alert("请选择文件！");
+						return;
+					}
+	
+					// 用FormData传输
+					let fd = new FormData();
+					fd.append("file", file);
+	
+					// 文件上传并获取进度
+					let xhr = new XMLHttpRequest();
+					xhr.open("post", "http://127.0.0.1:3000/", true);
+	
+					xhr.upload.onprogress = progressFunction;
+					xhr.onload = success;
+					xhr.onerror = fail;
+	
+					xhr.send(fd);
+				}
+			}
+	
+			// 文件夹上传
+			function uploadFiles() {
+				let fileUp = document.getElementById("filesInput").files;
+				for(var i = 0; i < fileUp.length; i++){
+					let file = filesInput.files[i];
+	
+					if (!file) {
+						alert("请选择文件！");
+						return;
+					}
+	
+					// 用FormData传输
+					let fd = new FormData();
+					fd.append("file", file);
+	
+					// 文件上传并获取进度
+					let xhr = new XMLHttpRequest();
+					xhr.open("post", "http://127.0.0.1:3000/", true);
+	
+					xhr.upload.onprogress = progressFunction;
+					xhr.onload = success;
+					xhr.onerror = fail;
+	
+					xhr.send(fd);
+	
+				}
+			}
+	
+			// 文件上传主体//
+	
+			// 重置上传文件
+			function clearFile() {
+			document.getElementById("fileInput").value = "";
+			
+			// 清除进度条、进度条上文字和服务端回信
+			var percent = 0;
+			probg.style.width = 0 / 100 * percent + "px";
+			percentInfo.innerHTML = "上传进度：" + percent + "%";
+			feedback.innerHTML = "服务端回信：";
+			}
+	
+			// 重置上传文件夹
+			function clearFiles() {
+			document.getElementById("filesInput").value = "";
+			
+			// 清除进度条、进度条上文字和服务端回信
+			var percent = 0;
+			probg.style.width = 0 / 100 * percent + "px";
+			percentInfo.innerHTML = "上传进度：" + percent + "%";
+			feedback.innerHTML = "服务端回信：";
+			}
+	
+			// 上传文件目录
+			filelist = [];
+			function getvl(obj){
+	
+				let fileUpSource = obj.files;
+				for(var i = 0; i < fileUpSource.length; i++){
+						file_num++;
+						var reader= new FileReader();
+						reader.readAsDataURL(fileUpSource[i]);
+						reader.filename = fileUpSource[i].name;
+						// console.log(fileUpSource[i]);
+						filelist.push(fileUpSource[i]);
+	
+						reader.onload=function(e){
+								// console.log(obj.files.length)
+								// console.log(this.filename);    
+						}
+	
+					//判断浏览器
+					var Sys = {};
+					var ua = navigator.userAgent.toLowerCase();
+					var s;
+					(s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+						(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+							(s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+								(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+									(s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+					var file_url="";
+					if(Sys.ie<="6.0"){
+						file_url = obj.value;
+					}else if(Sys.ie>="7.0"){
+						obj.select();
+						file_url = document.selection.createRange().text;
+					}else if(Sys.firefox){
+						file_url = readFileFirefox(obj);
+					}else if(Sys.chrome){
+						file_url = obj.value;
+					}
+					get_md5(obj,i,file_num);
+					stus.push([file_num,reader.filename,file_url]);
+	
+				}
+	
+			}
+	
+			// 展示上传文件
+			function showupfile(){
+				//先重置所有显示的tables
+				var body = document.querySelector(".saveButton");
+				var table = document.querySelector("table");
+				if(table)body.removeChild(table);
+	
+				
+				arr = ["序号","备份文件名","路径"];
+				
+				
+				
+				table = document.createElement("table");
+	
+				body.appendChild(table);
+				var thead = document.createElement("thead");
+				table.appendChild(thead);
+				var trd = document.createElement("tr");
+				thead.appendChild(trd);
+	
+				for(let i = 0;i<arr.length;i++){    
+					var th = document.createElement("th");
+					trd.appendChild(th);
+					var text = document.createTextNode(arr[i]);
+					th.appendChild(text);
+				}
+				var tbody = document.createElement("tbody");
+				table.appendChild(tbody);
+	
+				for(let i=0;i<stus.length;i++){
+					var tr = document.createElement("tr");
+					tbody.appendChild(tr);
+					for(let k in stus[i]){      
+						var td = document.createElement("td");
+						tr.appendChild(td);
+						var text = document.createTextNode(stus[i][k]);
+						td.appendChild(text);
+					}
+				}
+			}
+	
+			// 重置上传文件
+			function resetshowupfile(){
+				stus = [];
+				file_num = 0;
+				var body = document.querySelector(".saveButton");
+				var table = document.querySelector("table");
+				// while(table){
+					body.removeChild(table);
+				// }      
+			}
+	
+	
+			// 上传文件夹目录
+			filelist = [];
+			function getvls(obj){
+				let fileUpSource = obj.files;
+				for(var i = 0; i < fileUpSource.length; i++){
+						file_num++;
+						var reader= new FileReader();
+						reader.readAsDataURL(fileUpSource[i]);
+						reader.filename = fileUpSource[i].name;
+						// console.log(fileUpSource[i]);
+						filelist.push(fileUpSource[i]);
+	
+						reader.onload=function(e){
+								// console.log(obj.files.length)
+								// console.log(this.filename);    
+						}
+	
+					//判断浏览器
+					var Sys = {};
+					var ua = navigator.userAgent.toLowerCase();
+					var s;
+					(s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+						(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+							(s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+								(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+									(s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+					var file_url="";
+					if(Sys.ie<="6.0"){
+						file_url = obj.value;
+					}else if(Sys.ie>="7.0"){
+						obj.select();
+						file_url = document.selection.createRange().text;
+					}else if(Sys.firefox){
+						file_url = readFileFirefox(obj);
+					}else if(Sys.chrome){
+						file_url = obj.value;
+					}
+					get_md5(obj,i,file_num);
+					stus.push([file_num,reader.filename,file_url]);
+	
+				}
+	
+			}
+	
+			// 展示上传文件夹的文件
+			function showupfiles(){
+				//先重置所有显示的tables
+				var body = document.querySelector(".saveButton");
+				var table = document.querySelector("table");
+				if(table)body.removeChild(table);
+	
+				
+				arr = ["序号","备份文件名","路径"];
+				
+				
+				
+				table = document.createElement("table");
+	
+				body.appendChild(table);
+				var thead = document.createElement("thead");
+				table.appendChild(thead);
+				var trd = document.createElement("tr");
+				thead.appendChild(trd);
+	
+				for(let i = 0;i<arr.length;i++){    
+					var th = document.createElement("th");
+					trd.appendChild(th);
+					var text = document.createTextNode(arr[i]);
+					th.appendChild(text);
+				}
+				var tbody = document.createElement("tbody");
+				table.appendChild(tbody);
+	
+				for(let i=0;i<stus.length;i++){
+					var tr = document.createElement("tr");
+					tbody.appendChild(tr);
+					for(let k in stus[i]){      
+						var td = document.createElement("td");
+						tr.appendChild(td);
+						var text = document.createTextNode(stus[i][k]);
+						td.appendChild(text);
+					}
+				}
+			}
+	
+			// 重置上传文件夹的文件
+			function resetshowupfiles(){
+				stus = [];
+				file_num = 0;
+				var body = document.querySelector(".saveButton");
+				var table = document.querySelector("table");
+				// while(table){
+					body.removeChild(table);
+				// }      
+			}
+	
+	
+			// 获取上传文件或者文件夹的md5值
+			function get_md5(obj,i,file_num){
+			var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+			file = obj.files[i],
+			chunkSize = 2097152, // read in chunks of 2MB
+			chunks = Math.ceil(file.size / chunkSize),
+			currentChunk = 0,
+			spark = new SparkMD5.ArrayBuffer(),
+			frOnload = function(e){
+					spark.append(e.target.result); 
+					currentChunk++;
+					if (currentChunk < chunks)
+						loadNext();
+					else
+						// spark.end()只能被使用一次，不能被赋值，类似于剪切
+						// var md5 = spark.end();
+						console.log("第"+file_num+"个文件"+"计算后的文件md5:"+spark.end());     
+						// console.log(spark.end());    
+						
+				},
+				frOnerror = function () {
+					console.log("出错了");
+			};
+			function loadNext() {
+				var fileReader = new FileReader();
+				fileReader.onload = frOnload;
+				fileReader.onerror = frOnerror;
+				var start = currentChunk * chunkSize,
+				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+			};
+				loadNext();
+				
+			};
+
+			// 测试交互所用
+			var accessKey;
+			login();
+			// register();
+			// 异步执行，保证登陆执行先
+			setTimeout(()=>{
+				console.log(accessKey);
+				FeedBacks();
+				show_FeedBacks();
+				downloadFile;
+			},500);
+			
+
+			// 登陆
+			function login(){
+				$.ajax({
+					url: "http://uestcapi.basecat.cn/login",
+					data: {username: 'jerryyyy', password:'123456'},
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						console.log("登陆的数据为",data);
+						accessKey = data.msg;
+						console.log("登陆获得的ak为"+accessKey);
+						// data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+						$("#ret").text(data.result);
+					}
+				});
+			}
+
+			// 注册
+			function register(){
+				$.ajax({
+					url: "http://uestcapi.basecat.cn/register",
+					data: {username: '123555', password:'123456789',email:'abc@gamil'},
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						console.log("注册的数据为",data);
+						// data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+						let ret = data.ret;
+						if(ret == -1 && data.msg == "Username exists, please use login function!"){alert('用户名已经存在，请换一个用户名！');}
+						else alert("注册成功");
+						$("#ret").text(data.result);
+					}
+				});
+			}
+
+			// 发送反馈
+			function FeedBacks(){
+				$.ajax({
+					url: "http://uestcapi.basecat.cn/feedback",
+					data: {username: 'jerryyyy', AccessKey: accessKey,text:"很棒！"},
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						console.log("发送反馈的数据为",data);
+						// data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+						$("#ret").text(data.result);
+					}
+				});
+			}
+
+			//展示反馈
+			function show_FeedBacks(){
+				$.ajax({
+					url: "http://uestcapi.basecat.cn/getfeedback",
+					data: {username: 'jerryyyy', AccessKey: accessKey,page: 1,size:5},
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						let feedback_temp = data.msg;
+						console.log("展示反馈的数据为",JSON.parse(data.msg)[0]);
+						// data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
+						$("#ret").text(data.result);
+					}
+				});
+			}
+
+			//上传文件——与后端交互
+			function upload_file(){
+				var reads = new FileReader();
+				let img = document.getElementById("fileInput").files[0];
+				if(img.size <= 1024*1024*1){
+						// reads.readAsDataURL(img);
+						// reads.onload = function(e){
+						// document.querySelector(".user_via").src=this.result;//将图片url转成base64
+						// }
+					$.ajax({
+						type:"post",
+						url:"http://uestcapi.basecat.cn/upload",
+						cache:false,//上传数据不需要缓存
+						contentType:false,//已经在表单的entype处声明了multipart/form-data
+						processData:false,//data值是FormData对象，不需要对数据做处理
+						data:new FormData($("#viaBox")[0]),
+						success:function(res){
+							console.log(res);
+						},
+						error:function(err){
+							console.log(error);
+						}
+						})
+						}else{
+						console.log("上传图片不能超出1M");
+					}
+				}
+
+			//下载文件——与后端交互
+			function downloadFile(){
+				$.ajax({
+					url:"http://uestcapi.basecat.cn/download",
+					data: {username: 'jerryyyy', AccessKey:accessKey,filePath:'330327200105067711_高炳杰.pdf'},
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						console.log(data);
+						// $("#ret").text(data.result);
+						$("#ret").text(data.result);
+					},
+					error:function(){
+						console.log('error');
+					}
+					})
+            	}
+
+
+
+			
+		</script>
+	</body>
+</html>
+
+
