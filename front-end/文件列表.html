@@ -133,18 +133,19 @@
                     <div class="ui_text_indent">
                         <div id="box_border">
                             <div id="box_top">搜索</div>
-                            <div class="content clearfix">
-                                <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                            <!-- <div class="content clearfix">
+                                <form action="https://uestcapi.basecat.cn/feedback" method="post" target="_blank">
                                     <p>filePath: <input type="text" id="filePath"></p>
                                     <p>filter: <input type="text" id="filter"></p>
-                                    <button type="reset" onclick="resetFeedback();">重置内容</button>
-                                    <button type = "button" id="receivefile" onclick="receiveFile();">接受文件列表</button>
-                                    <button type = "button" onclick="showlist();">展示文件列表</button>
-                                    <button type = "button" onclick="showlist();">刷新</button>
                                 </form>
-                            </div>
+                            </div> -->
                             <div id="box_bottom">
-                                <input type="button" value="上传" id = "add_file"class="ui_input_btn01" onclick=";" /> 
+                                <input type="button" value="搜索" class="ui_input_btn01"/><input type="text" id="filter">
+                                <button type="reset" class="ui_input_btn01" onclick="resetFeedback();">重置内容</button>
+                                <button type = "button" class="ui_input_btn01" id="receivefile" onclick="receiveFile();">接受文件</button>
+                                <button type = "button"class="ui_input_btn01" onclick="showlist();">展示列表</button>
+                                <button type = "button"class="ui_input_btn01" onclick="showlist();">刷新</button>
+                                <input type="button" value="上传" id = "add_file"class="ui_input_btn01"/> 
                             </div>
                         </div>
                     </div>
@@ -153,38 +154,6 @@
         </div>
         <!-- 主页面设计 -->
         <div class="center" style="width:404px;margin:100px auto;">
-            <!-- <div class="box wrapper">
-                <div class="title">
-                    <h2>直接通过filePath删除文件</h2>
-                </div> 
-        
-                <div class="content clearfix">
-                    <form action="http://uestcapi.basecat.cn/delete" method="post" target="_blank">
-                        <p>password: <input type="text" id="password_delete"></p>
-                        <p>filePath: <input type="text" id="filePath_delete"></p>
-                        <button type = "button" type="reset">重置文本内容</button>
-                        <button type = "button" onclick="deletefiles();">删除文件</button>
-                    </form>
-                </div>
-            </div> -->
-
-            <!-- <div class="box wrapper">
-                <div class="title">
-                    <h2>展示文件列表</h2>
-                </div> 
-        
-                <div class="content clearfix">
-                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
-                        <p>filePath: <input type="text" id="filePath"></p>
-                        <p>filter: <input type="text" id="filter"></p>
-                        <button type="reset" onclick="resetFeedback();">重置内容</button>
-                        <button type = "button" id="receivefile" onclick="receiveFile();">接受文件列表</button>
-                        <button type = "button" onclick="showlist();">展示文件列表</button>
-                        <button type = "button" onclick="showlist();">刷新</button>
-                    </form>
-                </div>
-
-            </div> -->
 
             <div class="saveButton" style="margin:-50px -200px;">
                 <!-- <button>备份文件和文件夹</button> -->
@@ -213,8 +182,8 @@
             let filePath = "\/";
             let filter = document.getElementById("filter").value;
             $.ajax({
-                    url: "http://uestcapi.basecat.cn/filelist",
-                    data: {username: username, AccessKey: AccessKey,filePath:filePath,filter:filter},
+                    url: "https://uestcapi.basecat.cn/filelist",
+                    data: {username: username, AccessKey: AccessKey,filter:filter},
                     type: "POST",
                     dataType: "json",
                     success: function(data) {
@@ -223,8 +192,8 @@
                         if(data.ret == 0)alert("根目录文件已经全部接收成功！")
                         for(var i = 0;i<JSON.parse(data.msg).length;i++){
                             filelist.push([
-                            JSON.parse(data.msg)[i].name,
                             JSON.parse(data.msg)[i].path,
+                            JSON.parse(data.msg)[i].name,
                             num_change(JSON.parse(data.msg)[i].size),
                             timestampToTime(JSON.parse(data.msg)[i].modTime),
                             timestampToTime(JSON.parse(data.msg)[i].uploadTime),
@@ -240,11 +209,10 @@
             filelist = [];
             let username = localStorage.getItem("username");
             let AccessKey = localStorage.getItem("AccessKey");
-            let filePath = document.getElementById("filePath").value;
             let filter = document.getElementById("filter").value;
             $.ajax({
-                    url: "http://uestcapi.basecat.cn/filelist",
-                    data: {username: username, AccessKey: AccessKey,filePath:filePath,filter:filter},
+                    url: "https://uestcapi.basecat.cn/filelist",
+                    data: {username: username, AccessKey: AccessKey,filter:filter},
                     type: "POST",
                     dataType: "json",
                     success: function(data) {
@@ -253,8 +221,8 @@
                         if(data.ret == 0)alert("文件已经全部接收成功！")
                         for(var i = 0;i<JSON.parse(data.msg).length;i++){
                             filelist.push([
-                            JSON.parse(data.msg)[i].name,
                             JSON.parse(data.msg)[i].path,
+                            JSON.parse(data.msg)[i].name,
                             num_change(JSON.parse(data.msg)[i].size),
                             timestampToTime(JSON.parse(data.msg)[i].modTime),
                             timestampToTime(JSON.parse(data.msg)[i].uploadTime),
@@ -270,7 +238,7 @@
             var body = document.querySelector(".saveButton");
             var table = document.querySelector("table");
             if(table)body.removeChild(table);
-            arr = ["name","path","size","modTime","uploadTime","md5","delete","download","filehistory"];
+            arr = ["路径","文件名","大小","修改时间","上传时间","md5","   删除   ","   下载  "," 历史版本 "];
             
             table = document.createElement("table");
             body.appendChild(table);
@@ -301,7 +269,7 @@
                 //添加删除按钮
                 var a = document.createElement("a");
                 a.setAttribute("href","javascript:void(0);");
-                a.setAttribute("onclick","delete_singlefile(\""+filelist[i][1] +filelist[i][0]+ "\")");
+                a.setAttribute("onclick","delete_singlefile(\""+filelist[i][0]+filelist[i][1] + "\")");
                 a.innerHTML="删除";
                 var td = document.createElement("td");
                 tr.appendChild(td);
@@ -310,7 +278,7 @@
                 //添加下载按钮
                 var a = document.createElement("a");
                 a.setAttribute("href","javascript:void(0);");
-                a.setAttribute("onclick","downloadFile(\""+filelist[i][1] +filelist[i][0]+ "\",\""+filelist[i][5] + "\")");
+                a.setAttribute("onclick","downloadFile(\""+filelist[i][0]+ filelist[i][1] +"\",\""+filelist[i][5] + "\")");
                 a.innerHTML="下载";
                 var td = document.createElement("td");
                 tr.appendChild(td);
@@ -319,7 +287,7 @@
                 //添加下载文件历史版本按钮
                 var a = document.createElement("a");
                 a.setAttribute("href","javascript:void(0);");
-                a.setAttribute("onclick","downloadHistoryFile(\""+filelist[i][1] +filelist[i][0]+ "\")");
+                a.setAttribute("onclick","downloadHistoryFile(\""+filelist[i][0]+filelist[i][1] + "\")");
                 a.innerHTML="下载历史版本";
                 var td = document.createElement("td");
                 tr.appendChild(td);
@@ -339,7 +307,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/delete",
+                    url: "https://uestcapi.basecat.cn/delete",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath,},
                     dataType: "json",
                     success: function(response) {
@@ -362,7 +330,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/download",
+                    url: "https://uestcapi.basecat.cn/download",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath,md5:md5},
                     success: function(response, status, request) {
                         console.log(response);
@@ -394,7 +362,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/filehistory",
+                    url: "https://uestcapi.basecat.cn/filehistory",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath},
                     dataType: "json",
                     success: function(response, status, request) {
@@ -438,7 +406,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/delete",
+                    url: "https://uestcapi.basecat.cn/delete",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath,},
                     dataType: "json",
                     success: function(response) {
@@ -527,7 +495,7 @@
             }
 
 
-            arr = ["Path","size","modTime","uploadTime","deleted","md5","download"];
+            arr = ["路径","大小","修改时间","上传时间","删除","md5","下载"];
             table = document.createElement("table");
             alertContentDiv.appendChild(table);
             table.className="table";

@@ -173,7 +173,7 @@
                 // 文件上传并获取进度
                 let xhr = new XMLHttpRequest();
                 // xhr.open("post", "http://127.0.0.1:3000/", true);
-                xhr.open("post", "http://uestcapi.basecat.cn/upload", true);
+                xhr.open("post", "https://uestcapi.basecat.cn/upload", true);
                 
 
                 xhr.upload.onprogress = progressFunction;
@@ -201,7 +201,7 @@
 
                 // 文件上传并获取进度
                 let xhr = new XMLHttpRequest();
-                xhr.open("post", "http://uestcapi.basecat.cn/upload", true);
+                xhr.open("post", "https://uestcapi.basecat.cn/upload", true);
 
                 xhr.upload.onprogress = progressFunction;
                 // xhr.onload = success;
@@ -465,7 +465,7 @@
 
             $.ajax({
                 type: 'post',
-                url: "http://uestcapi.basecat.cn/upload",
+                url: "https://uestcapi.basecat.cn/upload",
                 data: formData,
                 processData: false, 
                 contentType: false,
@@ -508,7 +508,7 @@
             let AccessKey = localStorage.getItem("AccessKey");
             $.ajax({
                 type: 'post',
-                url: "http://uestcapi.basecat.cn/refresh",
+                url: "https://uestcapi.basecat.cn/refresh",
                 data: {username:username,AccessKey:AccessKey},
                 dataType:'json',
                 success: function (res) {

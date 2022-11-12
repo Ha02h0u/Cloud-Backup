@@ -39,7 +39,7 @@
                 </div> 
         
                 <div class="content clearfix">
-                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                    <form action="https://uestcapi.basecat.cn/feedback" method="post" target="_blank">
                         <p>输入反馈内容: <input id='feedback' type="text" name="text"></p>
                         <button type="reset">重置文本内容</button>
                         <button type = "button" id ='FeedBacks'>发送反馈</button>
@@ -53,7 +53,7 @@
                 </div> 
     
                 <div class="content clearfix">
-                    <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
+                    <form action="https://uestcapi.basecat.cn/feedback" method="post" target="_blank">
                         <p>[page](default 1): <input type="text" id="page"></p>
                         <p>[size](default 5): <input type="text" id="size"></p>
                         <button type="reset" onclick="resetFeedback()">重置内容</button>
@@ -117,7 +117,7 @@
             let AccessKey = localStorage.getItem("AccessKey");
             let feedbackText = document.getElementById("feedback").value;
             $.ajax({
-              url: "http://uestcapi.basecat.cn/feedback",
+              url: "https://uestcapi.basecat.cn/feedback",
               data: {username: username, AccessKey: AccessKey,text:feedbackText},
               type: "POST",
               dataType: "json",
@@ -140,7 +140,7 @@
             if(page == '')page = 1;
             if(size == '')size = 10;
             $.ajax({
-					url: "http://uestcapi.basecat.cn/getfeedback",
+					url: "https://uestcapi.basecat.cn/getfeedback",
 					data: {username: username, AccessKey: AccessKey,page: page,size:size},
 					type: "POST",
 					dataType: "json",
@@ -215,7 +215,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/download",
+                    url: "https://uestcapi.basecat.cn/download",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath},
                     success: function(response, status, request) {
                         console.log(response);
@@ -248,7 +248,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/delete",
+                    url: "https://uestcapi.basecat.cn/delete",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath,},
                     dataType: "json",
                     success: function(response) {

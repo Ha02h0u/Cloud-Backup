@@ -133,15 +133,22 @@
                     <div class="ui_text_indent">
                         <div id="box_border">
                             <div id="box_top">已删除文件搜索</div>
-                            <div class="content clearfix">
-                                <form action="http://uestcapi.basecat.cn/feedback" method="post" target="_blank">
-                                    <!-- <p>filePath: <input type="text" id="filePath"></p> -->
+                            <!-- <div class="content clearfix">
+                                <form action="https://uestcapi.basecat.cn/feedback" method="post" target="_blank">
                                     <p>filter: <input type="text" id="filter"></p>
                                     <button type="reset" onclick="resetFeedback();">重置内容</button>
                                     <button type = "button" id="receivefile" onclick="receiveFile();">接受文件列表</button>
                                     <button type = "button" onclick="showlist();">展示文件列表</button>
                                     <button type = "button" onclick="showlist();">刷新</button>
                                 </form>
+                            </div> -->
+                            <div id="box_bottom">
+                                <input type="button" value="搜索" class="ui_input_btn01"/><input type="text" id="filter">
+                                <button type="reset" class="ui_input_btn01" onclick="resetFeedback();">重置内容</button>
+                                <button type = "button" class="ui_input_btn01" id="receivefile" onclick="receiveFile();">接受文件</button>
+                                <button type = "button"class="ui_input_btn01" onclick="showlist();">展示列表</button>
+                                <button type = "button"class="ui_input_btn01" onclick="showlist();">刷新</button>
+                                <input type="button" value="上传" id = "add_file"class="ui_input_btn01"/> 
                             </div>
                         </div>
                     </div>
@@ -175,7 +182,7 @@
             let AccessKey = localStorage.getItem("AccessKey");
             let filter = document.getElementById("filter").value;
             $.ajax({
-                    url: "http://uestcapi.basecat.cn/recovery",
+                    url: "https://uestcapi.basecat.cn/recovery",
                     data: {username: username, AccessKey: AccessKey,filter:filter},
                     type: "POST",
                     dataType: "json",
@@ -185,8 +192,8 @@
                         if(data.ret == 0)alert("根目录已删除文件已经全部接收成功！")
                         for(var i = 0;i<JSON.parse(data.msg).length;i++){
                             filelist.push([
-                            JSON.parse(data.msg)[i].name,
                             JSON.parse(data.msg)[i].path,
+                            JSON.parse(data.msg)[i].name,
                             num_change(JSON.parse(data.msg)[i].size),
                             timestampToTime(JSON.parse(data.msg)[i].modTime),
                             timestampToTime(JSON.parse(data.msg)[i].uploadTime),
@@ -204,7 +211,7 @@
             let AccessKey = localStorage.getItem("AccessKey");
             let filter = document.getElementById("filter").value;
             $.ajax({
-                    url: "http://uestcapi.basecat.cn/recovery",
+                    url: "https://uestcapi.basecat.cn/recovery",
                     data: {username: username, AccessKey: AccessKey,filter:filter},
                     type: "POST",
                     dataType: "json",
@@ -214,8 +221,8 @@
                         if(data.ret == 0)alert("文件已经全部接收成功！")
                         for(var i = 0;i<JSON.parse(data.msg).length;i++){
                             filelist.push([
-                            JSON.parse(data.msg)[i].name,
                             JSON.parse(data.msg)[i].path,
+                            JSON.parse(data.msg)[i].name,
                             num_change(JSON.parse(data.msg)[i].size),
                             timestampToTime(JSON.parse(data.msg)[i].modTime),
                             timestampToTime(JSON.parse(data.msg)[i].uploadTime),
@@ -231,7 +238,7 @@
             var body = document.querySelector(".saveButton");
             var table = document.querySelector("table");
             if(table)body.removeChild(table);
-            arr = ["name","path","size","modTime","uploadTime","md5","download"];
+            arr = ["路径","文件名","大小","修改时间","上传时间","md5","下载"];
             
             table = document.createElement("table");
             body.appendChild(table);
@@ -262,7 +269,7 @@
                 //添加下载按钮
                 var a = document.createElement("a");
                 a.setAttribute("href","javascript:void(0);");
-                a.setAttribute("onclick","downloadFile(\""+filelist[i][1] +filelist[i][0]+ "\",\""+filelist[i][5] + "\")");
+                a.setAttribute("onclick","downloadFile(\""+filelist[i][0]+filelist[i][1] + "\",\""+filelist[i][5] + "\")");
                 a.innerHTML="下载";
                 var td = document.createElement("td");
                 tr.appendChild(td);
@@ -283,7 +290,7 @@
             else{
                 $.ajax({
                     type: "POST",
-                    url: "http://uestcapi.basecat.cn/download",
+                    url: "https://uestcapi.basecat.cn/download",
                     data: {username:username,AccessKey:AccessKey,filePath:filePath,md5:md5},
                     success: function(response, status, request) {
                         console.log(response);
