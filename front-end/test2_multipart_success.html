@@ -473,6 +473,8 @@
                 success: function (res) {
                     console.log(res);
                     feedback.innerHTML = "服务端回信：FAST upload success!";
+                    console.log(res.msg);
+                    alert(res.msg);
                 },
                 error: function (){
                     console.log('err');
@@ -514,6 +516,7 @@
                 success: function (res) {
                     console.log(res);
                     feedback.innerHTML = "服务端回信：已经重新获取到AccessKey";
+                    alert("成功多续5分钟！")
                 },
                 error: function (){
                     console.log('err');

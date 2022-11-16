@@ -56,7 +56,8 @@
                     // data = jQuery.parseJSON(data);  如果将dataType注释了，需要转换为JSON对象
                     let ret = data.ret;
                     if(ret == 0)alert("修改密码成功！");
-                    else alert("修改密码失败，可能是密码不符合规范!");
+                    else if(data.msg == 'No such username, please register first!') alert(data.msg);
+                    else alert(data.msg);
                     $("#ret").text(data.result);
                 },
                 error: function (){
