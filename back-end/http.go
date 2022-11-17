@@ -62,7 +62,7 @@ func httpRefresh(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	username := r.PostFormValue("username")
 	ak := r.PostFormValue("AccessKey")
-	log.Printf("refresh Trys: %s %s", username, ak)
+	log.Printf("[httpRefresh] username:%s AccessKey:%s", username, ak)
 	ret, msg := DbRefresh(DB, username, ak)
 	w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
 }
@@ -72,7 +72,7 @@ func httpFeedback(w http.ResponseWriter, r *http.Request) {
 	username := r.PostFormValue("username")
 	ak := r.PostFormValue("AccessKey")
 	text := r.PostFormValue("text")
-	log.Printf("feedback Trys: %s %s %s", username, ak, text)
+	log.Printf("[httpFeedback] username:%s AccessKey:%s Text:%s", username, ak, text)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -94,7 +94,7 @@ func httpGetFeedback(w http.ResponseWriter, r *http.Request) {
 	if page <= 0 {
 		page = 1
 	}
-	log.Printf("getFeedback Trys: %s %s %d %d", username, ak, size, page)
+	log.Printf("[httpGetFeedback] username:%s AccessKey:%s size:%d page:%d", username, ak, size, page)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -109,7 +109,7 @@ func httpRecovery(w http.ResponseWriter, r *http.Request) {
 	username := r.PostFormValue("username")
 	ak := r.PostFormValue("AccessKey")
 	filter := r.PostFormValue("filter")
-	log.Printf("recovery Trys: %s %s %s", username, ak, filter)
+	log.Printf("[httpRecovery] username:%s AccessKey:%s filter:%s", username, ak, filter)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -124,7 +124,7 @@ func httpFileList(w http.ResponseWriter, r *http.Request) {
 	username := r.PostFormValue("username")
 	ak := r.PostFormValue("AccessKey")
 	filter := r.PostFormValue("filter")
-	log.Printf("filelist Trys: %s %s %s", username, ak, filter)
+	log.Printf("[httpFileList] username:%s AccessKey:%s filter:%s", username, ak, filter)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -138,7 +138,7 @@ func httpUpload(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	username := r.PostFormValue("username")
 	ak := r.PostFormValue("AccessKey")
-	log.Printf("upload Trys: %s %s", username, ak)
+	log.Printf("[httpUpload] username:%s AccessKey:%s", username, ak)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -245,7 +245,7 @@ func httpFileHistory(w http.ResponseWriter, r *http.Request) {
 	ak := r.PostFormValue("AccessKey")
 	filePath := r.PostFormValue("filePath")
 	filePath = strings.ReplaceAll(filePath, "\\", "/")
-	log.Printf("httpFileHistory Trys: %s %s %s", username, ak, filePath)
+	log.Printf("[httpFileHistory] username:%s AccessKey:%s filePath:%s", username, ak, filePath)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -276,7 +276,7 @@ func httpDownload(w http.ResponseWriter, r *http.Request) {
 	filePath = strings.ReplaceAll(filePath, "\\", "/")
 	md5 := r.PostFormValue("md5")
 	md5 = strings.ToLower(md5)
-	log.Printf("download Trys: %s %s %s %s", username, ak, filePath, md5)
+	log.Printf("[httpDownload] username:%s AccessKey:%s filePath:%s md5:%s", username, ak, filePath, md5)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
@@ -324,7 +324,7 @@ func httpDelete(w http.ResponseWriter, r *http.Request) {
 	ak := r.PostFormValue("AccessKey")
 	filePath := r.PostFormValue("filePath")
 	filePath = strings.ReplaceAll(filePath, "\\", "/")
-	log.Printf("download Trys: %s %s %s", username, ak, filePath)
+	log.Printf("[httpDelete] username:%s AccessKey:%s filePath:%s", username, ak, filePath)
 	if ret, msg := httpVerify(username, ak); ret != 0 {
 		log.Println(msg)
 		w.Write([]byte(CommonResponse2String(commonResponse{ret, msg})))
